@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   // instead of bundling them into the server build.
   serverExternalPackages: ["mysql2", "neo4j-driver"],
   poweredByHeader: false,
+  devIndicators: false,
   turbopack: {
     rules: {
       "*.css": {

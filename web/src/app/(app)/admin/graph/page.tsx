@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PathFinder } from "@/components/path-finder";
 import { InsightsPanel } from "@/components/staff";
-import { Button, Card, ErrorNote, Loading, Notice, PageHeader, TableWrap } from "@/components/ui";
+import { Button, Card, ErrorNote, Loading, Notice, PageHeader } from "@/components/ui";
 import { apiSend, useApi } from "@/components/use-api";
 
 type Counts = { nodes: Array<{ label: string; total: number }>; relationships: Array<{ type: string; total: number }> };
@@ -52,31 +52,25 @@ export default function GraphAdmin() {
           ) : counts.error ? (
             <ErrorNote message={counts.error} onRetry={counts.reload} />
           ) : (
-            <TableWrap>
-              <tbody>
-                {counts.data?.nodes.map((n) => (
-                  <tr key={n.label}>
-                    <td className="font-mono text-xs">:{n.label}</td>
-                    <td className="tabular text-right">{n.total}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </TableWrap>
+                        <ul className="divide-y divide-line text-sm">
+              {counts.data?.nodes.map((n) => (
+                <li key={n.label} className="flex justify-between gap-2 py-2">
+                  <span className="font-mono text-xs">:{n.label}</span>
+                  <span className="tabular">{n.total}</span>
+                </li>
+              ))}
+            </ul>
           )}
         </Card>
         <Card title="Relationships">
-          {counts.data && (
-            <TableWrap>
-              <tbody>
-                {counts.data.relationships.map((r) => (
-                  <tr key={r.type}>
-                    <td className="font-mono text-xs">[:{r.type}]</td>
-                    <td className="tabular text-right">{r.total}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </TableWrap>
-          )}
+                      <ul className="divide-y divide-line text-sm">
+              {counts.data?.relationships.map((n) => (
+                <li key={n.type} className="flex justify-between gap-2 py-2">
+                  <span className="font-mono text-xs">[:{n.type}]</span>
+                  <span className="tabular">{n.total}</span>
+                </li>
+              ))}
+            </ul>
         </Card>
         <Card title="How the data is split">
           <ul className="list-disc space-y-1.5 pl-4 text-sm text-ink-2">

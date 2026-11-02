@@ -127,22 +127,25 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Native form controls share one look. */
-.input {
-  width: 100%;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  border-radius: 8px;
-  padding: 7px 10px;
-  font-size: 14px;
-  line-height: 20px;
-}
-.input:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 0;
-  border-color: transparent;
-}
-.input:disabled {
-  opacity: 0.6;
+/* Native form controls share one look. In the components layer so that
+   utilities such as w-auto can still override them. */
+@layer components {
+  .input {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 0;
+    border-color: transparent;
+  }
+  .input:disabled {
+    opacity: 0.6;
+  }
 }

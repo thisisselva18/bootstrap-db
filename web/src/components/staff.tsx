@@ -23,7 +23,8 @@ import type { FeedbackRow, RosterRow } from "@/lib/types";
 
 /** Attendance roster for one activity, with check-in/out and status actions. */
 export function RosterPanel({ activityId, activityName }: { activityId: number; activityName: string }) {
-  const [groupId, setGroupId] = useState<number | "">("");
+  // null = not chosen yet: show the first group's session rather than every row.
+  const [chosenGroup, setGroupId] = useState<number | "" | null>(null);
   const roster = useApi<{ roster: RosterRow[] }>(`/api/activities/${activityId}/roster`);
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ kind: "success" | "error"; text: string } | null>(null);
@@ -31,6 +32,7 @@ export function RosterPanel({ activityId, activityName }: { activityId: number; 
 
   const all = roster.data?.roster ?? [];
   const groups = [...new Map(all.map((r) => [r.g_id, { g_id: r.g_id, g_name: r.g_name, day: r.day }])).values()];
+  const groupId = chosenGroup ?? groups[0]?.g_id ?? "";
   const rows = groupId === "" ? all : all.filter((r) => r.g_id === groupId);
 
   async function act(r: RosterRow, action: string, label: string) {
@@ -80,11 +82,6 @@ export function RosterPanel({ activityId, activityName }: { activityId: number; 
               </option>
             ))}
           </select>
-          {groupId !== "" && (
-            <Button size="sm" variant="ghost" onClick={() => setGroupId("")}>
-              Clear
-            </Button>
-          )}
           <Button size="sm" onClick={excuseAll} busy={busyKey === "bulk"}>
             Excuse all absentees
           </Button>
@@ -117,7 +114,7 @@ export function RosterPanel({ activityId, activityName }: { activityId: number; 
               <th>Group / day</th>
               <th>Status</th>
               <th>In → out</th>
-              <th className="min-w-[300px]">Actions</th>
+              <th className="min-w-[470px]">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -138,7 +135,7 @@ export function RosterPanel({ activityId, activityName }: { activityId: number; 
                   {time(r.check_in_time)} → {time(r.check_out_time)}
                 </td>
                 <td>
-                  <div className="flex flex-wrap items-center gap-1">
+                  <div className="flex flex-nowrap items-center gap-1">
                     <Button size="sm" busy={busyKey === `${r.s_id}:check_in`} onClick={() => act(r, "check_in", "checked in now")}>
                       Check in
                     </Button>
