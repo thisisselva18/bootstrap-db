@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Role } from "@/lib/auth/session";
 import { cx } from "./ui";
@@ -32,6 +32,7 @@ const ROLE_LABEL: Record<Role, string> = { admin: "Admin", mentor: "Mentor", stu
 
 export function AppNav({ user }: { user: { name: string; role: Role; email: string } }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const links = LINKS[user.role];
   const isActive = (href: string) =>
@@ -39,7 +40,8 @@ export function AppNav({ user }: { user: { name: string; role: Role; email: stri
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    window.location.href = "/login";
+    router.replace("/login");
+    router.refresh();
   }
 
   return (

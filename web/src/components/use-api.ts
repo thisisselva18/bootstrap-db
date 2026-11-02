@@ -16,7 +16,9 @@ async function readJson<T>(res: Response): Promise<T> {
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
     if (res.status === 401 && typeof window !== "undefined") {
-      window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+      // Session expired: a full reload drops all client state before signing in again.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.assign(`/login?next=${encodeURIComponent(window.location.pathname)}`);
     }
     throw new ApiClientError((body as { error?: string }).error ?? `Request failed (${res.status})`, res.status);
   }
@@ -36,38 +38,38 @@ export async function apiSend<T = unknown>(method: "POST" | "PUT" | "PATCH" | "D
   return readJson<T>(res);
 }
 
-/** Loads `url` (skipped when null) and exposes loading/error state plus reload(). */
+/**
+ * Loads `url` (skipped when null) and exposes loading/error state plus
+ * reload(). Previous data stays visible while a new request is in flight.
+ */
 export function useApi<T>(url: string | null) {
-  const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(!!url);
   const [tick, setTick] = useState(0);
+  const key = url ? `${url}#${tick}` : null;
+  const [state, setState] = useState<{ key: string | null; data: T | null; error: string | null }>({
+    key: null,
+    data: null,
+    error: null,
+  });
 
   useEffect(() => {
-    if (!url) {
-      setLoading(false);
-      return;
-    }
+    if (!url || !key) return;
     let cancelled = false;
-    setLoading(true);
-    setError(null);
     apiGet<T>(url)
       .then((d) => {
-        if (!cancelled) setData(d);
+        if (!cancelled) setState({ key, data: d, error: null });
       })
       .catch((e: Error) => {
-        if (!cancelled) setError(e.message);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setState((s) => ({ key, data: s.data, error: e.message }));
       });
     return () => {
       cancelled = true;
     };
-  }, [url, tick]);
+  }, [url, key]);
 
+  const loading = !!key && state.key !== key;
   const reload = useCallback(() => setTick((t) => t + 1), []);
-  return { data, error, loading, reload, setData };
+  const setData = useCallback((data: T) => setState((s) => ({ ...s, data })), []);
+  return { data: state.data, error: loading ? null : state.error, loading, reload, setData };
 }
 
 /** Builds a query string, dropping empty values. */
