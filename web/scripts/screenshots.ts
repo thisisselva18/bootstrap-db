@@ -1,10 +1,10 @@
-// Usage: npm run screenshots  (app running at BASE_URL, default http://localhost:3000)
+// Usage: npm run screenshots  (app running at APP_URL, default http://localhost:3000)
 // Signs in as each demo role and saves full-page screenshots to docs/screenshots.
 // Uses the locally installed Microsoft Edge (or Chrome with BROWSER=chrome).
 import path from "node:path";
 import { chromium, type Page } from "playwright-core";
 
-const BASE = process.env.BASE_URL ?? "http://localhost:3000";
+const BASE = process.env.APP_URL ?? "http://localhost:3000";
 const OUT = path.resolve(__dirname, "../../docs/screenshots");
 const channel = process.env.BROWSER === "chrome" ? "chrome" : "msedge";
 

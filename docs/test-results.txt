@@ -1,0 +1,105 @@
+
+ RUN  v5.0.5 C:/Users/vk360/Desktop/College/Lab Work/DBMS/Final Project/Project/bootstrap-db/web
+
+ ✓ tests/e2e/api.test.ts > authentication > health is public and reports both databases 9ms
+ ✓ tests/e2e/api.test.ts > authentication > rejects missing or bad credentials 205ms
+ ✓ tests/e2e/api.test.ts > authentication > locks an email out after five failed attempts 419ms
+ ✓ tests/e2e/api.test.ts > authentication > redirects signed-out page requests to /login 4ms
+ ✓ tests/e2e/api.test.ts > authentication > does not return password hashes 10ms
+ ✓ tests/e2e/api.test.ts > role-based access > student GET /api/students -> 403 15ms
+ ✓ tests/e2e/api.test.ts > role-based access > student GET /api/stats/overview -> 403 16ms
+ ✓ tests/e2e/api.test.ts > role-based access > student GET /api/attendance/audit -> 403 22ms
+ ✓ tests/e2e/api.test.ts > role-based access > mentor GET /api/stats/overview -> 403 10ms
+ ✓ tests/e2e/api.test.ts > role-based access > mentor GET /api/mentors -> 403 14ms
+ ✓ tests/e2e/api.test.ts > role-based access > admin GET /api/stats/overview -> 200 29ms
+ ✓ tests/e2e/api.test.ts > role-based access > mentor GET /api/feedback -> 200 18ms
+ ✓ tests/e2e/api.test.ts > role-based access > student GET /api/me/dashboard -> 200 24ms
+ ✓ tests/e2e/api.test.ts > role-based access > keeps students to their own data 30ms
+ ✓ tests/e2e/api.test.ts > role-based access > keeps mentors to their own activities 43ms
+ ✓ tests/e2e/api.test.ts > role-based access > redirects a student away from admin pages 11ms
+ ✓ tests/e2e/api.test.ts > role-based access > rejects cross-site writes 18ms
+ ✓ tests/e2e/api.test.ts > validation and database rules > validates input before touching the database 64ms
+ ✓ tests/e2e/api.test.ts > validation and database rules > surfaces trigger and procedure rules as 409 102ms
+ ✓ tests/e2e/api.test.ts > workflows > admin enrols a student who can then sign in, and removes them again 375ms
+ ✓ tests/e2e/api.test.ts > workflows > mentor attendance changes are audited under the mentor's name 48ms
+ ✓ tests/e2e/api.test.ts > workflows > a 5-star rating in MySQL becomes a graph interest that drives recommendations 575ms
+ ✓ tests/e2e/api.test.ts > workflows > signing out clears the session cookie 13ms
+ ✓ tests/integration/graph.test.ts > sync > creates one node per MySQL row 6ms
+ ✓ tests/integration/graph.test.ts > sync > copies participation, ratings and derived interests exactly 5ms
+ ✓ tests/integration/graph.test.ts > sync > is idempotent and has uniqueness constraints 152ms
+ ✓ tests/integration/graph.test.ts > sync > refreshes a single student from MySQL 21ms
+ ✓ tests/integration/graph.test.ts > matchmaking queries > never recommends yourself or an existing connection, and sorts by score 27ms
+ ✓ tests/integration/graph.test.ts > matchmaking queries > connect/disconnect changes the recommendations 71ms
+ ✓ tests/integration/graph.test.ts > matchmaking queries > declared interests are stored and drive activity recommendations 28ms
+ ✓ tests/integration/graph.test.ts > matchmaking queries > similarity, mentors, ego graph and paths return well-formed results 32ms
+ ✓ tests/integration/graph.test.ts > matchmaking queries > reports unknown students clearly 3ms
+ ✓ tests/integration/mysql.test.ts > schema > has every table, view, routine and trigger 9ms
+ ✓ tests/integration/mysql.test.ts > schema > keeps the rotation a 5 x 5 Latin square 3ms
+ ✓ tests/integration/mysql.test.ts > schema > uses the composite index for group + branch lookups 2ms
+ ✓ tests/integration/mysql.test.ts > functions and views > fn_session_minutes and fn_scheduled_day 1ms
+ ✓ tests/integration/mysql.test.ts > functions and views > fn_attendance_pct and fn_risk_level agree with the raw rows 9ms
+ ✓ tests/integration/mysql.test.ts > functions and views > vw_student_schedule gives each student five sessions 4ms
+ ✓ tests/integration/mysql.test.ts > functions and views > ranks a student inside their group with window functions 15ms
+ ✓ tests/integration/mysql.test.ts > CHECK constraints > rejects out-of-range values 9ms
+ ✓ tests/integration/mysql.test.ts > CHECK constraints > refuses plaintext passwords and mismatched account links 3ms
+ ✓ tests/integration/mysql.test.ts > triggers > trg_part_set_status derives late/present from the clock and trg_part_audit logs it 8ms
+ ✓ tests/integration/mysql.test.ts > triggers > trg_part_validate enforces per-group capacity 2ms
+ ✓ tests/integration/mysql.test.ts > triggers > trg_feedback_validate rejects absent students 1ms
+ ✓ tests/integration/mysql.test.ts > triggers > trg_student_protect blocks deleting a student with attendance 2ms
+ ✓ tests/integration/mysql.test.ts > triggers > room clash triggers cover INSERT and UPDATE 2ms
+ ✓ tests/integration/mysql.test.ts > triggers > trg_student_email_sync keeps the login in step 4ms
+ ✓ tests/integration/mysql.test.ts > procedures and transactions > sp_register_student creates the student, five participation rows and a login atomically 106ms
+ ✓ tests/integration/mysql.test.ts > procedures and transactions > sp_register_student rolls back everything on a duplicate 99ms
+ ✓ tests/integration/mysql.test.ts > procedures and transactions > an application transaction rolls the mentor back when the login insert fails 82ms
+ ✓ tests/integration/mysql.test.ts > procedures and transactions > sp_submit_feedback upserts one rating per student and activity 5ms
+ ✓ tests/integration/mysql.test.ts > procedures and transactions > sp_mark_absentees excuses every remaining absentee (cursor) 13ms
+ ✓ tests/integration/mysql.test.ts > procedures and transactions > sp_generate_rotation refuses while attendance exists 2ms
+ ✓ tests/integration/mysql.test.ts > procedures and transactions > applyAttendance records the acting user in the audit log 13ms
+ ✓ tests/integration/mysql.test.ts > full-text search > ranks natural-language matches by relevance 2ms
+ ✓ tests/integration/mysql.test.ts > full-text search > supports boolean operators 1ms
+ ✓ tests/unit/api-and-auth.test.ts > mapDbError > turns a trigger SIGNAL into 409 with its message 2ms
+ ✓ tests/unit/api-and-auth.test.ts > mapDbError > names the duplicated key 0ms
+ ✓ tests/unit/api-and-auth.test.ts > mapDbError > explains CHECK violations 0ms
+ ✓ tests/unit/api-and-auth.test.ts > mapDbError > maps foreign key errors 0ms
+ ✓ tests/unit/api-and-auth.test.ts > mapDbError > ignores non-database errors 0ms
+ ✓ tests/unit/api-and-auth.test.ts > errorResponse > uses the status of an ApiError 5ms
+ ✓ tests/unit/api-and-auth.test.ts > errorResponse > reports zod issues as 400 5ms
+ ✓ tests/unit/api-and-auth.test.ts > errorResponse > reports an unreachable graph as 503 0ms
+ ✓ tests/unit/api-and-auth.test.ts > errorResponse > hides internal errors 0ms
+ ✓ tests/unit/api-and-auth.test.ts > sessions > round-trips a signed session 17ms
+ ✓ tests/unit/api-and-auth.test.ts > sessions > rejects tampered, foreign and missing tokens 3ms
+ ✓ tests/unit/api-and-auth.test.ts > sessions > sends each role to its dashboard 0ms
+ ✓ tests/unit/api-and-auth.test.ts > resolveStudentId > pins students to their own record 1ms
+ ✓ tests/unit/api-and-auth.test.ts > resolveStudentId > lets staff choose but requires a choice 0ms
+ ✓ tests/unit/api-and-auth.test.ts > login rate limit > locks after five failures and clears on success 0ms
+ ✓ tests/unit/api-and-auth.test.ts > peerScore > weights sum to 1 at the maximum 0ms
+ ✓ tests/unit/api-and-auth.test.ts > peerScore > caps mutual connections 0ms
+ ✓ tests/unit/api-and-auth.test.ts > peerScore > follows the branch preference 0ms
+ ✓ tests/unit/validation.test.ts > studentCreateSchema > normalises USN, email and numbers 4ms
+ ✓ tests/unit/validation.test.ts > studentCreateSchema > rejects semester 9 1ms
+ ✓ tests/unit/validation.test.ts > studentCreateSchema > rejects semester 0 0ms
+ ✓ tests/unit/validation.test.ts > studentCreateSchema > rejects bad USN 0ms
+ ✓ tests/unit/validation.test.ts > studentCreateSchema > rejects bad email 0ms
+ ✓ tests/unit/validation.test.ts > studentCreateSchema > rejects name with digits 0ms
+ ✓ tests/unit/validation.test.ts > studentCreateSchema > rejects weak password 0ms
+ ✓ tests/unit/validation.test.ts > studentCreateSchema > rejects password without digit 0ms
+ ✓ tests/unit/validation.test.ts > studentUpdateSchema > requires at least one field 1ms
+ ✓ tests/unit/validation.test.ts > feedbackSubmitSchema > accepts ratings 1..5 only 1ms
+ ✓ tests/unit/validation.test.ts > feedbackSubmitSchema > limits comments to 1000 characters 0ms
+ ✓ tests/unit/validation.test.ts > attendanceActionSchema > needs a time for set_check_in and pads HH:MM 1ms
+ ✓ tests/unit/validation.test.ts > attendanceActionSchema > rejects unknown actions and impossible times 0ms
+ ✓ tests/unit/validation.test.ts > schedule schemas > requires end after start 1ms
+ ✓ tests/unit/validation.test.ts > auth schemas > validates login input 0ms
+ ✓ tests/unit/validation.test.ts > auth schemas > rejects reusing the current password 0ms
+ ✓ tests/unit/validation.test.ts > mentor and graph schemas > checks mentor phone format 1ms
+ ✓ tests/unit/validation.test.ts > mentor and graph schemas > de-duplicates interests and refuses self paths 1ms
+
+ Test Files  5 passed (5)
+      Tests  92 passed (92)
+   Start at  22:19:44
+   Duration  9.46s (import 57%, tests 40%, transform 2%, setup 1%, worker 1%)
+
+     Import  29 modules were evaluated 45 times · 4.86s total, 57% of tracked time
+             ~1.73s faster with isolate: false — shared modules are evaluated once per worker instead of once per file
+             learn more: https://vitest.dev/guide/improving-performance#test-isolation
+
