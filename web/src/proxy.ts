@@ -5,7 +5,7 @@ import { SESSION_COOKIE, homeFor, verifySession, type Role } from "@/lib/auth/se
 // role inside its own dashboard and rejects cross-site API writes. Every
 // route handler checks the session and role again on its own.
 
-const PUBLIC_API = new Set(["/api/auth/login", "/api/health"]);
+const PUBLIC_API = new Set(["/api/auth/login", "/api/auth/logout", "/api/health"]);
 
 const PAGE_ROLES: Array<[prefix: string, roles: Role[]]> = [
   ["/admin", ["admin"]],
