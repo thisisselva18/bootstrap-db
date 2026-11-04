@@ -94,7 +94,7 @@ CREATE TABLE Feedback (
     INDEX ix_fb_activity (a_id)
 );
 
-CREATE TABLE AttendanceLog (
+CREATE TABLE attendance_log (
     log_id      BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     p_id        BIGINT UNSIGNED  NOT NULL,
     s_id        INT UNSIGNED     NOT NULL,
@@ -221,7 +221,7 @@ AFTER UPDATE ON Participates
 FOR EACH ROW
 BEGIN
     IF NEW.status <> OLD.status THEN
-        INSERT INTO AttendanceLog (p_id, s_id, a_id, old_status, new_status, changed_by)
+        INSERT INTO attendance_log (p_id, s_id, a_id, old_status, new_status, changed_by)
         VALUES (NEW.p_id, NEW.s_id, NEW.a_id, OLD.status, NEW.status, CURRENT_USER());
     END IF;
 END//
@@ -415,7 +415,7 @@ UNION ALL SELECT 'Schedule',       COUNT(*) FROM Schedule
 UNION ALL SELECT 'Student',        COUNT(*) FROM Student
 UNION ALL SELECT 'Participates',   COUNT(*) FROM Participates
 UNION ALL SELECT 'Feedback',       COUNT(*) FROM Feedback
-UNION ALL SELECT 'AttendanceLog',  COUNT(*) FROM AttendanceLog;
+UNION ALL SELECT 'attendance_log', COUNT(*) FROM attendance_log;
 
 -- =====================================================================
 -- PART 3 : STORED FUNCTIONS, PROCEDURES, TRIGGERS, VIEWS
@@ -572,8 +572,10 @@ DROP PROCEDURE IF EXISTS sp_check_in//
 CREATE PROCEDURE sp_check_in(IN p_s_id INT UNSIGNED, IN p_a_id TINYINT UNSIGNED)
 BEGIN
     UPDATE Participates
-    SET    check_in_time = NOW(), status = 'present'
-    WHERE  s_id = p_s_id AND a_id = p_a_id;        -- trg_part_set_status may force 'late'
+    SET    check_in_time = NOW(),
+        check_out_time = NULL,
+        status = 'present'
+    WHERE  s_id = p_s_id AND a_id = p_a_id;
 
     IF ROW_COUNT() = 0 THEN
         SIGNAL SQLSTATE '45000'
@@ -709,7 +711,7 @@ GROUP  BY a.a_id, a.a_name, a.capacity, m.m_name;
 CREATE OR REPLACE VIEW vw_attendance_audit AS
 SELECT l.log_id, l.changed_at, s.s_usn, s.s_name, a.a_name AS activity,
        l.old_status, l.new_status, l.changed_by
-FROM   AttendanceLog l
+FROM   attendance_log l
 JOIN   Student  s ON s.s_id = l.s_id
 JOIN   Activity a ON a.a_id = l.a_id;
 
@@ -787,7 +789,7 @@ DELETE FROM Feedback                                          -- DELETE with sub
 WHERE  (s_id, a_id) IN (SELECT s_id, a_id FROM
                           (SELECT s_id, a_id FROM Participates WHERE status = 'excused') AS ex);
 
-DELETE l FROM AttendanceLog l                                 -- multi-table DELETE
+DELETE l FROM attendance_log l                                 -- multi-table DELETE
 LEFT JOIN Student s ON s.s_id = l.s_id
 WHERE  s.s_id IS NULL;
 

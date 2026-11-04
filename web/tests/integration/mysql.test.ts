@@ -65,7 +65,7 @@ describe("schema", () => {
     );
     const by = Object.fromEntries(counts.map((c) => [c.kind, c.names.toLowerCase().split(",")]));
     expect(by.table).toEqual(
-      expect.arrayContaining(["activity", "appuser", "attendancelog", "bootstrapgroup", "feedback", "mentor", "participates", "schedule", "student"]),
+      expect.arrayContaining(["activity", "appuser", "attendance_log", "bootstrapgroup", "feedback", "mentor", "participates", "schedule", "student"]),
     );
     expect(by.view).toEqual(
       expect.arrayContaining(["vw_timetable", "vw_student_attendance", "vw_activity_stats", "vw_attendance_audit", "vw_student_schedule", "vw_group_stats"]),
@@ -182,7 +182,7 @@ describe("triggers", () => {
       expect(await status()).toBe("present");
 
       const [[log]] = (await c.query(
-        "SELECT old_status, new_status, changed_by FROM AttendanceLog WHERE s_id = ? AND a_id = ? ORDER BY log_id DESC LIMIT 1",
+        "SELECT old_status, new_status, changed_by FROM attendance_log WHERE s_id = ? AND a_id = ? ORDER BY log_id DESC LIMIT 1",
         [attended.s_id, attended.a_id],
       )) as [Array<{ old_status: string; new_status: string; changed_by: string }>, unknown];
       expect(log).toEqual({ old_status: "late", new_status: "present", changed_by: "tester@univ.edu" });
@@ -321,12 +321,12 @@ describe("procedures and transactions", () => {
       "SELECT status, check_in_time, check_out_time FROM Participates WHERE s_id = ? AND a_id = ?",
       [absent.s_id, absent.a_id],
     );
-    const lastLog = (await queryOne<{ id: number }>("SELECT COALESCE(MAX(log_id), 0) AS id FROM AttendanceLog"))!.id;
+    const lastLog = (await queryOne<{ id: number }>("SELECT COALESCE(MAX(log_id), 0) AS id FROM attendance_log"))!.id;
     try {
       const rec = await applyAttendance("auditor@univ.edu", absent.s_id, absent.a_id, "excuse");
       expect(rec.status).toBe("excused");
       const log = await queryOne<{ changed_by: string }>(
-        "SELECT changed_by FROM AttendanceLog WHERE s_id = ? AND a_id = ? ORDER BY log_id DESC LIMIT 1",
+        "SELECT changed_by FROM attendance_log WHERE s_id = ? AND a_id = ? ORDER BY log_id DESC LIMIT 1",
         [absent.s_id, absent.a_id],
       );
       expect(log?.changed_by).toBe("auditor@univ.edu");
@@ -339,7 +339,7 @@ describe("procedures and transactions", () => {
         absent.a_id,
       ]);
       // The restoring UPDATE is audited too; drop every row this test produced.
-      await execute("DELETE FROM AttendanceLog WHERE log_id > ? AND s_id = ?", [lastLog, absent.s_id]);
+      await execute("DELETE FROM attendance_log WHERE log_id > ? AND s_id = ?", [lastLog, absent.s_id]);
     }
   });
 });

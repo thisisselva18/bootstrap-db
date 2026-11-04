@@ -9,7 +9,7 @@ export function timetable() {
     `SELECT sc.schedule_id, sc.\`day\`, g.g_id, g.g_name, a.a_id, a.a_name, sc.room,
             sc.start_time, sc.end_time, m.m_name AS mentor
      FROM   Schedule sc
-     JOIN   BootstrapGroup g ON g.g_id = sc.g_id
+     JOIN   bootstrap_group g ON g.g_id = sc.g_id
      JOIN   Activity       a ON a.a_id = sc.a_id
      LEFT JOIN Mentor      m ON m.m_id = a.m_id
      ORDER  BY sc.\`day\`, g.g_id`,
@@ -54,7 +54,7 @@ export function roster(activityId: number, groupId?: number) {
             p.status, p.check_in_time, p.check_out_time,
             fn_session_minutes(p.check_in_time, p.check_out_time) AS minutes
      FROM   Schedule sc
-     JOIN   BootstrapGroup g ON g.g_id = sc.g_id
+     JOIN   bootstrap_group g ON g.g_id = sc.g_id
      JOIN   Student        s ON s.g_id = sc.g_id
      JOIN   Participates   p ON p.s_id = s.s_id AND p.a_id = sc.a_id
      WHERE  sc.a_id = ? ${groupId ? "AND sc.g_id = ?" : ""}
@@ -96,7 +96,9 @@ export async function applyAttendance(
           // Keep the original date if there is one, otherwise use today.
           await run(
             `UPDATE Participates
-             SET    check_in_time = TIMESTAMP(DATE(COALESCE(check_in_time, NOW())), ?), status = 'present'
+             SET    check_in_time = TIMESTAMP(DATE(COALESCE(check_in_time, NOW())), ?),
+                    check_out_time = NULL,
+                    status = 'present'
              WHERE  s_id = ? AND a_id = ?`,
             [time, studentId, activityId],
           );
