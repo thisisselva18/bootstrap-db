@@ -98,7 +98,7 @@ AFTER UPDATE ON Participates
 FOR EACH ROW
 BEGIN
     IF NEW.status <> OLD.status THEN
-        INSERT INTO AttendanceLog (p_id, s_id, a_id, old_status, new_status, changed_by)
+        INSERT INTO attendance_log (p_id, s_id, a_id, old_status, new_status, changed_by)
         VALUES (NEW.p_id, NEW.s_id, NEW.a_id, OLD.status, NEW.status,
                 COALESCE(@app_user, USER()));
     END IF;
@@ -204,7 +204,28 @@ SELECT g.g_id, g.g_name,
        SUM(p.status = 'absent')                                                 AS absent,
        SUM(p.status = 'excused')                                                AS excused,
        ROUND(100 * SUM(p.status IN ('present','late')) / NULLIF(COUNT(p.p_id),0), 2) AS attendance_pct
-FROM   BootstrapGroup g
+FROM   bootstrap_group g
 LEFT JOIN Student s      ON s.g_id = g.g_id
 LEFT JOIN Participates p ON p.s_id = s.s_id
 GROUP  BY g.g_id, g.g_name;
+
+-- Compatibility views used by the web application.
+
+CREATE OR REPLACE VIEW vw_student_attendance AS
+SELECT v.s_id, v.s_usn, v.s_name, v.colour_group, v.branch,
+       v.sessions, v.present, v.late_arrivals, v.absent, v.excused,
+       v.attendance_pct,
+       CASE
+           WHEN v.attendance_pct >= 80 THEN 'LOW'
+           WHEN v.attendance_pct >= 60 THEN 'MEDIUM'
+           ELSE 'HIGH'
+       END AS risk
+FROM v_student_attendance v;
+
+CREATE OR REPLACE VIEW vw_activity_stats AS
+SELECT *
+FROM v_activity_stats;
+
+CREATE OR REPLACE VIEW vw_attendance_audit AS
+SELECT *
+FROM v_attendance_audit;

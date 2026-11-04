@@ -47,7 +47,7 @@ async function loadFromMysql(studentId?: number) {
   const fFilter = studentId ? "WHERE f.s_id = ?" : "";
   const sp = studentId ? [studentId] : [];
   const [groups, mentors, activities, students, participation, ratings] = await Promise.all([
-    query<{ g_id: number; name: string }>("SELECT g_id, g_name AS name FROM BootstrapGroup"),
+    query<{ g_id: number; name: string }>("SELECT g_id, g_name AS name FROM bootstrap_group"),
     query<{ m_id: number; name: string; dept: string | null; designation: string | null }>(
       "SELECT m_id, m_name AS name, dept, designation FROM Mentor",
     ),

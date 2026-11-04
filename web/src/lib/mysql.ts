@@ -53,7 +53,7 @@ type ConnOptions = { appUser?: string };
 /**
  * Runs `fn` on one dedicated connection. When `appUser` is given it is put
  * in the @app_user session variable, which trg_part_audit writes into
- * AttendanceLog.changed_by, and cleared again before the connection goes
+ * attendance_log.changed_by, and cleared again before the connection goes
  * back to the pool.
  */
 export async function withConnection<T>(

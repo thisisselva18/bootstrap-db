@@ -3,7 +3,7 @@ import { callProc, execute, query, queryOne, withConnection } from "../mysql";
 import type { ScheduleItem, StudentDashboard, StudentRow } from "../types";
 import { hashPassword } from "./auth";
 
-const STUDENT_COLUMNS = `v.s_id, v.s_usn, v.s_name, s.email, v.branch, v.semester, s.g_id, v.colour_group,
+const STUDENT_COLUMNS = `v.s_id, v.s_usn, v.s_name, s.email, v.branch, s.semester, s.g_id, v.colour_group,
        v.sessions, v.present, v.late_arrivals, v.absent, v.excused, v.attendance_pct, v.risk`;
 
 export type StudentFilters = {
@@ -40,7 +40,7 @@ export async function listStudents(f: StudentFilters): Promise<StudentRow[]> {
     params.push(f.branch);
   }
   if (f.semester) {
-    where.push("v.semester = ?");
+    where.push("s.semester = ?");
     params.push(f.semester);
   }
   if (f.risk) {
@@ -139,7 +139,7 @@ export async function studentDashboard(sId: number): Promise<StudentDashboard> {
   const profile = await queryOne<StudentDashboard["profile"]>(
     `SELECT s.s_id, s.s_usn, s.s_name, s.email, s.branch, s.semester, s.g_id, g.g_name, u.last_login
      FROM   Student s
-     JOIN   BootstrapGroup g ON g.g_id = s.g_id
+     JOIN   bootstrap_group g ON g.g_id = s.g_id
      LEFT JOIN AppUser u     ON u.s_id = s.s_id
      WHERE  s.s_id = ?`,
     [sId],

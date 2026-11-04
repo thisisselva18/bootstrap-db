@@ -208,7 +208,7 @@ describe("workflows", () => {
       "SELECT s_id, status, check_in_time, check_out_time FROM Participates WHERE a_id = ? AND status = 'present' LIMIT 1",
       [mentorActivity],
     );
-    const lastLog = (await queryOne<{ id: number }>("SELECT COALESCE(MAX(log_id), 0) AS id FROM AttendanceLog"))!.id;
+    const lastLog = (await queryOne<{ id: number }>("SELECT COALESCE(MAX(log_id), 0) AS id FROM attendance_log"))!.id;
     try {
       // A check-in after the recorded 16:30 check-out violates chk_part_times.
       const late = await call("/api/attendance", {
@@ -236,7 +236,7 @@ describe("workflows", () => {
         row!.s_id,
         mentorActivity,
       ]);
-      await execute("DELETE FROM AttendanceLog WHERE log_id > ? AND s_id = ?", [lastLog, row!.s_id]);
+      await execute("DELETE FROM attendance_log WHERE log_id > ? AND s_id = ?", [lastLog, row!.s_id]);
     }
   });
 
