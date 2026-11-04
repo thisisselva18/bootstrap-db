@@ -39,7 +39,7 @@ describe("sync", () => {
   it("creates one node per MySQL row", async () => {
     const [mysql] = await query<{ s: number; m: number; a: number; g: number; b: number }>(
       `SELECT (SELECT COUNT(*) FROM Student) AS s, (SELECT COUNT(*) FROM Mentor) AS m, (SELECT COUNT(*) FROM Activity) AS a,
-              (SELECT COUNT(*) FROM BootstrapGroup) AS g, (SELECT COUNT(DISTINCT branch) FROM Student) AS b`,
+              (SELECT COUNT(*) FROM bootstrap_group) AS g, (SELECT COUNT(DISTINCT branch) FROM Student) AS b`,
     );
     const nodes = Object.fromEntries(
       (await cypherRead<{ label: string; n: number }>("MATCH (n) RETURN labels(n)[0] AS label, count(*) AS n")).map((r) => [r.label, r.n]),

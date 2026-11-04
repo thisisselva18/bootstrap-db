@@ -33,7 +33,7 @@ const UNIQUE_MESSAGES: Record<string, string> = {
   "student.email": "A student with that email already exists",
   "mentor.email": "A mentor with that email already exists",
   "activity.a_name": "An activity with that name already exists",
-  "bootstrapgroup.g_name": "A group with that name already exists",
+  "bootstrap_group.g_name": "A group with that name already exists",
   "appuser.username": "An account with that email already exists",
   "feedback.s_id": "Feedback for that activity already exists",
 };

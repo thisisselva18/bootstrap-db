@@ -10,7 +10,7 @@ DROP DATABASE IF EXISTS bootstrap_db;
 CREATE DATABASE IF NOT EXISTS bootstrap_db;
 USE bootstrap_db;
 
-CREATE TABLE BootstrapGroup (
+CREATE TABLE bootstrap_group (
     g_id    TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     g_name  VARCHAR(20) NOT NULL UNIQUE          -- Red, Blue, Green, Purple, Yellow
 );
@@ -40,7 +40,7 @@ CREATE TABLE Student (
     email   VARCHAR(120)     NOT NULL UNIQUE,
     branch  VARCHAR(60),
     g_id    TINYINT UNSIGNED NOT NULL,
-    FOREIGN KEY (g_id) REFERENCES BootstrapGroup(g_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (g_id) REFERENCES bootstrap_group(g_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     INDEX ix_student_group (g_id),
     INDEX ix_student_branch (branch)
 );
@@ -54,7 +54,7 @@ CREATE TABLE Schedule (
     a_id         TINYINT UNSIGNED NOT NULL,
     g_id         TINYINT UNSIGNED NOT NULL,
     FOREIGN KEY (a_id) REFERENCES Activity(a_id)       ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (g_id) REFERENCES BootstrapGroup(g_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (g_id) REFERENCES bootstrap_group(g_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     UNIQUE (`day`, g_id),          -- one activity per group per day
     UNIQUE (`day`, a_id),          -- one group per activity per day
     CONSTRAINT chk_schedule_day   CHECK (`day` BETWEEN 1 AND 5),
@@ -290,7 +290,7 @@ SHOW INDEX FROM Participates;
 -- test data, not real observations.
 
 -- 2.1 The five colour groups
-INSERT INTO BootstrapGroup (g_id, g_name) VALUES
+INSERT INTO bootstrap_group (g_id, g_name) VALUES
 (1, 'Red'), (2, 'Blue'), (3, 'Green'), (4, 'Purple'), (5, 'Yellow');
 
 -- 2.2 Mentors (8; three stay unassigned, which exercises the nullable FK)
@@ -408,7 +408,7 @@ FROM   Participates p
 WHERE  p.status IN ('present','late') AND (p.s_id + p.a_id) MOD 3 = 0;
 
 -- 2.10 Load check
-SELECT 'BootstrapGroup' AS table_name, COUNT(*) AS rows_loaded FROM BootstrapGroup
+SELECT 'bootstrap_group' AS table_name, COUNT(*) AS rows_loaded FROM bootstrap_group
 UNION ALL SELECT 'Mentor',         COUNT(*) FROM Mentor
 UNION ALL SELECT 'Activity',       COUNT(*) FROM Activity
 UNION ALL SELECT 'Schedule',       COUNT(*) FROM Schedule
@@ -678,7 +678,7 @@ CREATE OR REPLACE VIEW vw_timetable AS
 SELECT sc.`day`, g.g_name AS colour_group, a.a_name AS activity,
        sc.room, sc.start_time, sc.end_time, m.m_name AS mentor
 FROM   Schedule sc
-JOIN   BootstrapGroup g ON g.g_id = sc.g_id
+JOIN   bootstrap_group g ON g.g_id = sc.g_id
 JOIN   Activity       a ON a.a_id = sc.a_id
 LEFT JOIN Mentor      m ON m.m_id = a.m_id;
 
@@ -692,7 +692,7 @@ SELECT s.s_id, s.s_usn, s.s_name, g.g_name AS colour_group, s.branch, s.semester
        fn_attendance_pct(s.s_id) AS attendance_pct,
        fn_risk_level(s.s_id)     AS risk
 FROM   Student s
-JOIN   BootstrapGroup g ON g.g_id = s.g_id
+JOIN   bootstrap_group g ON g.g_id = s.g_id
 LEFT JOIN Participates p ON p.s_id = s.s_id
 GROUP  BY s.s_id, s.s_usn, s.s_name, g.g_name, s.branch, s.semester;
 
@@ -812,7 +812,7 @@ WHERE  s.s_id IS NULL;
 -- Q1  INNER JOIN : the printed timetable for the Green group
 SELECT sc.`day`, g.g_name AS colour_group, a.a_name AS activity, sc.room, sc.start_time
 FROM   Schedule sc
-JOIN   BootstrapGroup g ON g.g_id = sc.g_id
+JOIN   bootstrap_group g ON g.g_id = sc.g_id
 JOIN   Activity       a ON a.a_id = sc.a_id
 WHERE  g.g_name = 'Green'
 ORDER  BY sc.`day`;
@@ -880,12 +880,12 @@ FROM   Student s ORDER BY s.s_usn LIMIT 15;
 -- Q12 NESTED (multi-level) subquery : groups attending better than average
 SELECT t.g_name, t.pct
 FROM  (SELECT g.g_name, ROUND(100 * SUM(p.status IN ('present','late')) / COUNT(*), 2) AS pct
-       FROM   BootstrapGroup g JOIN Student s ON s.g_id = g.g_id
+       FROM   bootstrap_group g JOIN Student s ON s.g_id = g.g_id
        JOIN   Participates p ON p.s_id = s.s_id
        GROUP  BY g.g_id, g.g_name) t
 WHERE t.pct > (SELECT AVG(x.pct) FROM
                  (SELECT ROUND(100 * SUM(p.status IN ('present','late')) / COUNT(*), 2) AS pct
-                  FROM BootstrapGroup g JOIN Student s ON s.g_id = g.g_id
+                  FROM bootstrap_group g JOIN Student s ON s.g_id = g.g_id
                   JOIN Participates p ON p.s_id = s.s_id
                   GROUP BY g.g_id) x);
 
@@ -918,7 +918,7 @@ FROM   Student s ORDER BY pct LIMIT 15;
 SELECT g.g_name, a.a_name, sc.room, m.m_name AS mentor, s.s_usn, s.s_name,
        p.status, fn_session_minutes(p.check_in_time, p.check_out_time) AS minutes
 FROM   Schedule sc
-JOIN   BootstrapGroup g ON g.g_id = sc.g_id
+JOIN   bootstrap_group g ON g.g_id = sc.g_id
 JOIN   Activity       a ON a.a_id = sc.a_id
 LEFT JOIN Mentor      m ON m.m_id = a.m_id
 JOIN   Student        s ON s.g_id = g.g_id

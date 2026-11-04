@@ -65,7 +65,7 @@ describe("schema", () => {
     );
     const by = Object.fromEntries(counts.map((c) => [c.kind, c.names.toLowerCase().split(",")]));
     expect(by.table).toEqual(
-      expect.arrayContaining(["activity", "appuser", "attendance_log", "bootstrapgroup", "feedback", "mentor", "participates", "schedule", "student"]),
+      expect.arrayContaining(["activity", "appuser", "attendance_log", "bootstrap_group", "feedback", "mentor", "participates", "schedule", "student"]),
     );
     expect(by.view).toEqual(
       expect.arrayContaining(["vw_timetable", "vw_student_attendance", "vw_activity_stats", "vw_attendance_audit", "vw_student_schedule", "vw_group_stats"]),

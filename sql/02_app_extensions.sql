@@ -208,24 +208,3 @@ FROM   bootstrap_group g
 LEFT JOIN Student s      ON s.g_id = g.g_id
 LEFT JOIN Participates p ON p.s_id = s.s_id
 GROUP  BY g.g_id, g.g_name;
-
--- Compatibility views used by the web application.
-
-CREATE OR REPLACE VIEW vw_student_attendance AS
-SELECT v.s_id, v.s_usn, v.s_name, v.colour_group, v.branch,
-       v.sessions, v.present, v.late_arrivals, v.absent, v.excused,
-       v.attendance_pct,
-       CASE
-           WHEN v.attendance_pct >= 80 THEN 'LOW'
-           WHEN v.attendance_pct >= 60 THEN 'MEDIUM'
-           ELSE 'HIGH'
-       END AS risk
-FROM v_student_attendance v;
-
-CREATE OR REPLACE VIEW vw_activity_stats AS
-SELECT *
-FROM v_activity_stats;
-
-CREATE OR REPLACE VIEW vw_attendance_audit AS
-SELECT *
-FROM v_attendance_audit;
