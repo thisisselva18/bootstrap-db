@@ -139,7 +139,7 @@ export async function studentDashboard(sId: number): Promise<StudentDashboard> {
   const profile = await queryOne<StudentDashboard["profile"]>(
     `SELECT s.s_id, s.s_usn, s.s_name, s.email, s.branch, s.semester, s.g_id, g.g_name, u.last_login
      FROM   Student s
-     JOIN   bootstrap_group g ON g.g_id = s.g_id
+     JOIN   BootstrapGroup g ON g.g_id = s.g_id
      LEFT JOIN AppUser u     ON u.s_id = s.s_id
      WHERE  s.s_id = ?`,
     [sId],

@@ -12,7 +12,7 @@ export async function overview() {
       `SELECT 'students' AS entity, COUNT(*) AS total FROM Student
        UNION ALL SELECT 'mentors',  COUNT(*) FROM Mentor
        UNION ALL SELECT 'activities', COUNT(*) FROM Activity
-       UNION ALL SELECT 'groups',   COUNT(*) FROM bootstrap_group
+       UNION ALL SELECT 'groups',   COUNT(*) FROM BootstrapGroup
        UNION ALL SELECT 'sessions', COUNT(*) FROM Schedule
        UNION ALL SELECT 'feedback', COUNT(*) FROM Feedback
        UNION ALL SELECT 'auditEntries', COUNT(*) FROM attendance_log`,
