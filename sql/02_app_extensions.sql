@@ -204,7 +204,7 @@ SELECT g.g_id, g.g_name,
        SUM(p.status = 'absent')                                                 AS absent,
        SUM(p.status = 'excused')                                                AS excused,
        ROUND(100 * SUM(p.status IN ('present','late')) / NULLIF(COUNT(p.p_id),0), 2) AS attendance_pct
-FROM   bootstrap_group g
+FROM   BootstrapGroup g
 LEFT JOIN Student s      ON s.g_id = g.g_id
 LEFT JOIN Participates p ON p.s_id = s.s_id
 GROUP  BY g.g_id, g.g_name;

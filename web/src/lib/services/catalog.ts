@@ -10,7 +10,7 @@ export function listGroups() {
 }
 
 export async function renameGroup(id: number, name: string) {
-  const { affectedRows } = await execute("UPDATE bootstrap_group SET g_name = ? WHERE g_id = ?", [name, id]);
+  const { affectedRows } = await execute("UPDATE BootstrapGroup SET g_name = ? WHERE g_id = ?", [name, id]);
   if (affectedRows === 0) throw new ApiError(404, "Group not found");
 }
 
